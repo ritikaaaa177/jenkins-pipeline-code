@@ -9,17 +9,7 @@ pipeline {
         choice(name: 'City', choices: ['Gurugram','Delhi','Chandigarh' ], description: "")
     }
     stages {
-        stage('Run A command') {
-            steps {
-                sh '''
-                ls
-                date
-                pwd
-                cal 2021
-                '''
-                
-            }
-        }
+        
         stage('Environment Variables') {
             environment {
                 username = 'myusername'
