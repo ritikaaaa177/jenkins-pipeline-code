@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         name = 'Ritika'
+        username = 'myusername' 
     }
     parameters {
         string(name: 'person', defaultValue: 'ritz', description: "Who are you?")
@@ -9,11 +10,7 @@ pipeline {
         choice(name: 'City', choices: ['Gurugram','Delhi','Chandigarh' ], description: "")
     }
     stages {
-        
         stage('Environment Variables') {
-            environment {
-                username = 'myusername'
-            }
             steps {
                 sh 'echo  "${BUILD_ID}"'
                 sh 'echo  "${name}"'
@@ -24,17 +21,21 @@ pipeline {
             steps {
                 echo 'deploy on test'
                 sh 'echo "${name}"'
-                sh 'echo  "${person}"'
+                sh 'echo "${person}"' 
             }
         }
         stage('Continue ?') {
-            input {
-                message "Should we continue?"
-                ok "Yes we Should"
-            }
-            
             steps {
-                echo 'deploy on prod'
+                script {
+                    def userInput = input(
+                        id: 'userInput',
+                        message: "Should we continue?",
+                        parameters: [
+                            [$class: 'BooleanParameterValue', name: 'proceed', value: true]
+                        ]
+                    )
+                    echo "User input: ${userInput}"
+                }
             }
         }
         stage('Deploy on prod') {
@@ -43,15 +44,15 @@ pipeline {
             }
         }
     }
-    post{
+    post {
         always { 
             echo 'I will always say Hello again!'
         }
-        failure{
+        failure {
             echo 'Failure'
         }
-        success{
-            echo 'Successs'
+        success {
+            echo 'Success'
         }
     }
 }
